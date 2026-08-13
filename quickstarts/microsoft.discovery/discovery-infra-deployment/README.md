@@ -51,7 +51,32 @@ The following resources are deployed as part of the solution
 ## Prerequisites
 
 - An active Azure subscription with access to the **Microsoft Discovery** preview.
-- The **Microsoft.Discovery** resource provider registered on your subscription, along with `Microsoft.App`, `Microsoft.ContainerService`, `Microsoft.Network`, `Microsoft.ManagedIdentity`, and `Microsoft.Storage`.
+- The following resource providers registered on your subscription (see [Microsoft Discovery quickstart](https://learn.microsoft.com/en-us/azure/microsoft-discovery/quickstart-infrastructure-portal) for the authoritative list):
+  - `Microsoft.AlertsManagement`
+  - `Microsoft.App`
+  - `Microsoft.Authorization`
+  - `Microsoft.Bing`
+  - `Microsoft.CognitiveServices`
+  - `Microsoft.Compute`
+  - `Microsoft.ContainerInstance`
+  - `Microsoft.ContainerRegistry`
+  - `Microsoft.ContainerService`
+  - `Microsoft.Discovery`
+  - `Microsoft.DocumentDB`
+  - `Microsoft.Features`
+  - `Microsoft.Insights`
+  - `Microsoft.KeyVault`
+  - `Microsoft.MachineLearningServices`
+  - `Microsoft.ManagedIdentity`
+  - `Microsoft.Network`
+  - `Microsoft.OperationalInsights`
+  - `Microsoft.ResourceGraph`
+  - `Microsoft.Resources`
+  - `Microsoft.Search`
+  - `Microsoft.Sql`
+  - `Microsoft.Storage`
+  - `Microsoft.Web`
+
 - Sufficient role assignments: *Discovery Platform Admin*, *Managed Identity Contributor*, *Network Contributor*, and *Storage Account Contributor* at the target resource-group scope.
 - Microsoft Discovery is available in **East US**, **East US 2**, **Sweden Central**, and **UK South**.
 
@@ -84,9 +109,10 @@ Add additional Node Pools, Storage Containers, or Tools via the Azure portal or 
 - All resources must reside in the same region.
 - The `storageAccountName` parameter must be globally unique (3-24 lowercase alphanumeric characters).
 - GPU SKU examples for `nodePoolVmSize`: `Standard_NC24ads_A100_v4`, `Standard_NC4as_T4_v3`.
+- The storage account allows network access by default (`networkAcls.defaultAction: Allow`) because the `Microsoft.Discovery` control plane is not yet on the Azure Storage trusted-services bypass list and requires this to provision successfully; `virtualNetworkRules` for the deployment's own subnets are pre-configured and ready to enforce once Discovery supports trusted-service access. The account also uses `Standard_GRS` replication (`storageAccountSku`), disables shared-key/public-blob access, and disables anonymous blob container access.
 - The workspace includes quickstart-aligned tags:
   - `discovery.workbench.enableGhcpAiFeatures`: defaults to `true`
   - `discovery.workbench.enableExtensions`: defaults to `true`
-  - `NetworkIsolation`: defaults to `false`
+  - `NetworkIsolation`: defaults to `true`, but Discovery Studio's workbench currently only supports connecting when `networkIsolation` is set to `false`; set the `networkIsolation` parameter to `false` at deployment time if you need public preview workbench access.
 
 Tags: `Microsoft.Discovery/supercomputers`, `Microsoft.Discovery/workspaces`, `Microsoft.Discovery/storageContainers`, `Microsoft.Discovery/workspaces/projects`, `Microsoft.Network/virtualNetworks`, `Microsoft.ManagedIdentity/userAssignedIdentities`, `Microsoft.Storage/storageAccounts`
